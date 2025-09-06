@@ -332,12 +332,14 @@ export class AuthService {
     email,
     password,
     type,
+    phone_number,
   }: {
     name: string;
     first_name: string;
     last_name: string;
     email: string;
     password: string;
+    phone_number:number;
     type?: string;
   }) {
     try {

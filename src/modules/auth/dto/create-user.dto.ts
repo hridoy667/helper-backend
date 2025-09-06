@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty()
-  name?: string;
+  name: string;
 
   @IsNotEmpty()
   @ApiProperty()
-  first_name?: string;
+  first_name: string;
 
   @IsNotEmpty()
   @ApiProperty()
@@ -16,16 +16,18 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  email?: string;
+  email: string;
 
   @IsNotEmpty()
   @MinLength(8, { message: 'Password should be minimum 8' })
   @ApiProperty()
   password: string;
 
+  @IsOptional()
+  @IsEnum()
   @ApiProperty({
     type: String,
     example: 'user',
   })
-  type?: string;
+  type?: Role = Role.USER;
 }
