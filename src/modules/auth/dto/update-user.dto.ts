@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
-import { IsOptional } from 'class-validator';
+import { IsOptional, IsPhoneNumber } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
@@ -15,14 +15,14 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     description: 'State',
     example: 'Lagos',
   })
-  state?: string;
+  state: string;
 
   @IsOptional()
   @ApiProperty({
     description: 'City',
     example: 'Lagos',
   })
-  city?: string;
+  city: string;
 
   @IsOptional()
   @ApiProperty({
@@ -36,21 +36,22 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     description: 'Zip code',
     example: '123456',
   })
-  zip_code?: string;
+  zip_code: string;
 
+  @IsPhoneNumber()
   @IsOptional()
   @ApiProperty({
     description: 'Phone number',
     example: '+91 9876543210',
   })
-  phone_number?: string;
+  phone_number?: number;
 
   @IsOptional()
   @ApiProperty({
     description: 'Address',
     example: 'New York, USA',
   })
-  address?: string;
+  address: string;
 
   @IsOptional()
   @ApiProperty({
@@ -65,4 +66,25 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     example: '14/11/2001',
   })
   date_of_birth?: string;
+
+  @IsOptional()
+  @ApiProperty({
+    description: 'bio',
+    example: 'a professional mechanic',
+  })
+  bio?: string;
+
+  @IsOptional()
+  @ApiProperty({
+    description: 'Address',
+    example: 'Plumbing, Fixing leakages',
+  })
+  age?: number;
+
+  @IsOptional()
+  @ApiProperty({
+    description: 'Address',
+    example: 'Plumbing, Fixing leakages',
+  })
+  skills?: string;
 }

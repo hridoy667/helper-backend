@@ -40,6 +40,7 @@ export class AuthService {
           phone_number: true,
           type: true,
           gender: true,
+          
           date_of_birth: true,
           created_at: true,
         },
@@ -84,9 +85,6 @@ export class AuthService {
   ) {
     try {
       const data: any = {};
-      if (updateUserDto.name) {
-        data.name = updateUserDto.name;
-      }
       if (updateUserDto.first_name) {
         data.first_name = updateUserDto.first_name;
       }
@@ -116,6 +114,15 @@ export class AuthService {
       }
       if (updateUserDto.gender) {
         data.gender = updateUserDto.gender;
+      }
+      if (updateUserDto.bio) {
+        data.bio = updateUserDto.bio;
+      }
+      if (updateUserDto.age) {
+        data.age = updateUserDto.age;
+      }
+      if (updateUserDto.skills) {
+        data.skills = updateUserDto.skills;
       }
       if (updateUserDto.date_of_birth) {
         data.date_of_birth = DateHelper.format(updateUserDto.date_of_birth);
@@ -326,7 +333,7 @@ export class AuthService {
   }
 
   async register({
-    name,
+    username,
     first_name,
     last_name,
     email,
@@ -334,13 +341,13 @@ export class AuthService {
     type,
     phone_number,
   }: {
-    name: string;
+    username: string;
     first_name: string;
     last_name: string;
     email: string;
     password: string;
     phone_number:number;
-    type?: string;
+    type: string;
   }) {
     try {
       // Check if email already exist
@@ -357,11 +364,12 @@ export class AuthService {
       }
 
       const user = await UserRepository.createUser({
-        name: name,
+        username: username,
         first_name: first_name,
         last_name: last_name,
         email: email,
         password: password,
+        phone_number: phone_number,
         type: type,
       });
 
@@ -376,7 +384,7 @@ export class AuthService {
       const stripeCustomer = await StripePayment.createCustomer({
         user_id: user.data.id,
         email: email,
-        name: name,
+        name: username,
       });
 
       if (stripeCustomer) {
@@ -391,44 +399,44 @@ export class AuthService {
       }
 
       // ----------------------------------------------------
-      // // create otp code
-      // const token = await UcodeRepository.createToken({
-      //   userId: user.data.id,
-      //   isOtp: true,
-      // });
-
-      // // send otp code to email
-      // await this.mailService.sendOtpCodeToEmail({
-      //   email: email,
-      //   name: name,
-      //   otp: token,
-      // });
-
-      // return {
-      //   success: true,
-      //   message: 'We have sent an OTP code to your email',
-      // };
-
-      // ----------------------------------------------------
-
-      // Generate verification token
-      const token = await UcodeRepository.createVerificationToken({
+      // create otp code
+      const token = await UcodeRepository.createToken({
         userId: user.data.id,
-        email: email,
+        isOtp: true,
       });
 
-      // Send verification email with token
-      await this.mailService.sendVerificationLink({
-        email,
-        name: email,
-        token: token.token,
-        type: type,
+      // send otp code to email
+      await this.mailService.sendOtpCodeToEmail({
+        email: email,
+        name: username,
+        otp: token,
       });
 
       return {
         success: true,
-        message: 'We have sent a verification link to your email',
+        message: 'We have sent an OTP code to your email',
       };
+
+      // ----------------------------------------------------
+
+      // Generate verification token
+      // const token = await UcodeRepository.createVerificationToken({
+      //   userId: user.data.id,
+      //   email: email,
+      // });
+
+      // // Send verification email with token
+      // await this.mailService.sendVerificationLink({
+      //   email,
+      //   name: email,
+      //   token: token.token,
+      //   type: type,
+      // });
+
+      // return {
+      //   success: true,
+      //   message: 'We have sent a verification link to your email',
+      // };
     } catch (error) {
       return {
         success: false,
@@ -547,10 +555,10 @@ export class AuthService {
           });
 
           // delete otp code
-          // await UcodeRepository.deleteToken({
-          //   email: email,
-          //   token: token,
-          // });
+          await UcodeRepository.deleteToken({
+            email: email,
+            token: token,
+          });
 
           return {
             success: true,

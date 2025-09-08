@@ -190,7 +190,7 @@ export class UserRepository {
    * @returns
    */
   static async createUser({
-    name,
+    username,
     first_name,
     last_name,
     email,
@@ -199,19 +199,19 @@ export class UserRepository {
     role_id = null,
     type = 'user',
   }: {
-    name?: string;
+    username?: string;
     first_name?: string;
     last_name?: string;
     email: string;
     password: string;
-    phone_number?: string;
+    phone_number?: number;
     role_id?: string;
     type?: string;
   }) {
     try {
       const data = {};
-      if (name) {
-        data['name'] = name;
+      if (username) {
+        data['username'] = username;
       }
       if (first_name) {
         data['first_name'] = first_name;

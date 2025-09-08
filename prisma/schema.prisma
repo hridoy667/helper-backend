@@ -82,6 +82,9 @@ model User {
   roles                Role[]
   role_users           RoleUser[]
   payment_transactions PaymentTransaction[]
+  age Int?
+  bio String?
+  skills String?
 
   @@map("users")
 }
