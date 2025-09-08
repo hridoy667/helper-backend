@@ -28,7 +28,7 @@ import { AuthGuard } from '@nestjs/passport';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @ApiOperation({ summary: 'Get user details' })
   @ApiBearerAuth()
@@ -403,6 +403,8 @@ export class AuthController {
     }
   }
 
+  
+
   @ApiOperation({ summary: 'Change email address' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -435,6 +437,9 @@ export class AuthController {
     }
   }
   // -------end change email address------
+
+
+
 
   // --------- 2FA ---------
   @ApiOperation({ summary: 'Generate 2FA secret' })
@@ -503,3 +508,5 @@ export class AuthController {
   }
   // --------- end 2FA ---------
 }
+
+

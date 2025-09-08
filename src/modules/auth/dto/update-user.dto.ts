@@ -9,6 +9,13 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     example: 'Nigeria',
   })
   country?: string;
+  
+  @IsOptional()
+  @ApiProperty({
+    description: 'username',
+    example: 'John doe',
+  })
+  username?: string;
 
   @IsOptional()
   @ApiProperty({

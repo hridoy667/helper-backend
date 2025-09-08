@@ -597,4 +597,52 @@ export class UserRepository {
     });
     return user;
   }
+
+
+  // In user.repository.ts
+static async changeUsername({
+  user_id,
+  new_username,
+}: {
+  user_id: string;
+  new_username: string;
+}) {
+  try {
+    // Check if the new username is already taken
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        username: new_username,
+      },
+    });
+
+    if (existingUser) {
+      return {
+        success: false,
+        message: 'Username is already in use by another account',
+      };
+    }
+
+    // Update the username
+    const user = await prisma.user.update({
+      where: {
+        id: user_id,
+      },
+      data: {
+        username: new_username, // Update the username
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Username updated successfully',
+      data: user,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+}
+  
 }

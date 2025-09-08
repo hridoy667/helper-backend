@@ -34,6 +34,7 @@ export class AuthService {
         select: {
           id: true,
           name: true,
+          username:true,
           email: true,
           avatar: true,
           address: true,
@@ -87,6 +88,9 @@ export class AuthService {
       const data: any = {};
       if (updateUserDto.first_name) {
         data.first_name = updateUserDto.first_name;
+      }
+      if (updateUserDto.username) {
+        data.username = updateUserDto.username;
       }
       if (updateUserDto.last_name) {
         data.last_name = updateUserDto.last_name;
@@ -148,6 +152,22 @@ export class AuthService {
 
         data.avatar = fileName;
       }
+
+      if (updateUserDto.username) {
+      const usernameUpdateResponse = await UserRepository.changeUsername({
+        user_id: userId,
+        new_username: updateUserDto.username,
+      });
+
+      if (!usernameUpdateResponse.success) {
+        return {
+          success: false,
+          message: usernameUpdateResponse.message,
+        };
+      }
+    }
+
+
       const user = await UserRepository.getUserDetails(userId);
       if (user) {
         await this.prisma.user.update({
