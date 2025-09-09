@@ -599,7 +599,6 @@ export class UserRepository {
   }
 
 
-  // In user.repository.ts
 static async changeUsername({
   user_id,
   new_username,

@@ -403,6 +403,34 @@ export class AuthController {
     }
   }
 
+
+   // -------change username------
+
+// @ApiOperation({ summary: 'Request username change' })
+// @ApiBearerAuth()
+// @UseGuards(JwtAuthGuard)
+// @Post('request-username-change')
+// async requestUsernameChange(
+//   @Req() req: Request,
+//   @Body() data: { email: string },
+// ) {
+//   try {
+//     const user_id = req.user.userId; 
+//     const email = data.email;
+
+//     if (!email) {
+//       throw new HttpException('Email not provided', HttpStatus.UNAUTHORIZED);
+//     }
+
+//     return await this.authService.requestUsernameChange(user_id, email);
+//   } catch (error) {
+//     return {
+//       success: false,
+//       message: 'Something went wrong',
+//     };
+//   }
+// }
+
   
 
   @ApiOperation({ summary: 'Change email address' })
@@ -436,6 +464,49 @@ export class AuthController {
       };
     }
   }
+  @ApiOperation({ summary: 'Change email address' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('change-username')
+  async changeUsername(
+    @Req() req: Request,
+    @Body() data: { email: string; token: string; username: string },
+  ) {
+    try {
+    const user_id = req.user.userId;
+    const { email, token, username } = data;
+
+    // Validate inputs
+    if (!email) {
+      throw new HttpException('Email not provided', HttpStatus.BAD_REQUEST);
+    }
+
+    if (!token) {
+      throw new HttpException('Token not provided', HttpStatus.BAD_REQUEST);
+    }
+
+    if (!username) {
+      throw new HttpException('Username not provided', HttpStatus.BAD_REQUEST);
+    }
+
+    // Call the service to handle the email and username change
+    return await this.authService.changeUsername({
+      user_id: user_id,
+      new_email: email,
+      token: token,
+      new_username: username,
+    });
+  } catch (error) {
+    return {
+      success: false,
+      message: error?.response?.message || 'Something went wrong',
+    };
+  }
+  }
+
+
+
+
   // -------end change email address------
 
 
@@ -507,6 +578,9 @@ export class AuthController {
     }
   }
   // --------- end 2FA ---------
+  
 }
+
+
 
 

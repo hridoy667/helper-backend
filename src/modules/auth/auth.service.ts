@@ -713,6 +713,40 @@ export class AuthService {
     }
   }
 
+//   async requestUsernameChange(user_id: string, email: string) {
+//   try {
+//     const user = await UserRepository.getUserByEmail(email);
+//     if (!user) {
+//       return {
+//         success: false,
+//         message: 'User with this email address does not exist', 
+//       };
+//     }
+//     const token = await UcodeRepository.createToken({
+//       userId: user_id,
+//       isOtp: true,
+//       email: email, 
+//     });
+
+//     await this.mailService.sendOtpCodeToEmail({
+//       email: email,
+//       name: user.username, 
+//       otp: token,
+//     });
+
+//     return {
+//       success: true,
+//       message: 'We have sent an OTP code to your email for username change', 
+//     };
+//   } catch (error) {
+//     return {
+//       success: false,
+//       message: error.message, 
+//     };
+//   }
+// }
+
+
   async changeEmail({
     user_id,
     new_email,
@@ -766,6 +800,62 @@ export class AuthService {
         message: error.message,
       };
     }
+  }
+
+  async changeUsername({
+    user_id,
+  new_email,
+  token,
+  new_username,
+}: {
+  user_id: string;
+  new_email: string;
+  token: string;
+  new_username: string;
+}) {
+  try {
+    const user = await UserRepository.getUserDetails(user_id);
+
+    if (!user) {
+      return {
+        success: false,
+        message: 'User not found',
+      };
+    }
+
+    // Validate the token for email change
+    const existToken = await UcodeRepository.validateToken({
+      email: new_email,
+      token,
+      forEmailChange: true,
+    });
+
+    if (!existToken) {
+      return {
+        success: false,
+        message: 'Invalid token',
+      };
+    }
+
+    // Proceed with updating both email and username
+    const updatedUser = await this.prisma.user.update({
+      where: { id: user_id },
+      data: {
+        username: new_username, // Update username
+      },
+    });
+
+    return {
+      success: true,
+      message: 'username updated successfully',
+      data: updatedUser,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message || 'Something went wrong',
+    };
+  }
   }
 
   // --------- 2FA ---------
@@ -847,4 +937,5 @@ export class AuthService {
     }
   }
   // --------- end 2FA ---------
+  
 }
